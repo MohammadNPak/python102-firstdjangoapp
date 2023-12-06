@@ -1,0 +1,53 @@
+{% extends "base_accounts.html" %}
+{% load static %}
+
+{% block content %}
+    <nav class="navbar bg-dark">
+      <h1>
+        <a href="dashboard.html"> <i class="fas fa-code"></i> DevConnector </a>
+      </h1>
+      <ul>
+        <li><a href="profiles.html">Developers</a></li>
+        <li><a href="register.html">Register</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+    <section class="container">
+      <h1 class="large text-primary">
+        Developers
+      </h1>
+      <p class="lead">
+        <i class="fab fa-connectdevelop"></i> Browse and connect with developers
+      </p>
+      <div class="profiles">
+        {% for profile in all_profiles %}
+        <div class="profile bg-light">
+          <img
+            class="round-img"
+            src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+            alt=""
+          />
+
+          <div>
+            <h2>{{ profile.name }}, {{ profile.last_name }}</h2>
+            <p>{{ profile.job_title }} at {{ profile.company }}</p>
+            <p>{{ profile.city }}</p>
+            <a href="profile.html" class="btn btn-primary">
+              View Profile
+            </a>
+          </div>
+
+          <ul>
+            <li class="text-primary"><i class="fas fa-check"></i> HTML</li>
+            <li class="text-primary"><i class="fas fa-check"></i> CSS</li>
+            <li class="text-primary">
+              <i class="fas fa-check"></i> JavaScript
+            </li>
+            <li class="text-primary"><i class="fas fa-check"></i> Python</li>
+          </ul>
+        </div>
+        {% endfor %}
+        
+      </div>
+    </section>
+    {% endblock content %}
