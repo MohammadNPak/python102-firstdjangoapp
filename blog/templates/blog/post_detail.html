@@ -1,0 +1,92 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<nav class="navbar bg-dark">
+  <h1>
+    <a href="index.html"><i class="fas fa-code"></i> DevConnector</a>
+  </h1>
+  <ul>
+    <li><a href="profiles.html">Developers</a></li>
+    <li><a href="posts.html">Posts</a></li>
+    <li>
+      <a href="dashboard.html" title="Dashboard"
+        ><i class="fas fa-user"></i> <span class="hide-sm">Dashboard</span></a
+      >
+    </li>
+    <li>
+      <a href="login.html" title="Logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="hide-sm">Logout</span></a
+      >
+    </li>
+  </ul>
+</nav>
+<section class="container">
+  <a href="posts.html" class="btn">Back To Posts</a>
+  
+  <div class="post bg-white p-1 my-1">
+    <div>
+      <a href="{{post.author.get_absolute_url}}">
+        <img
+          class="round-img"
+          src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+          alt=""
+        />
+        <h4>{{post.author.get_full_name}}</h4>
+      </a>
+    </div>
+    <div>
+      <h3>{{post.title}}</h3>
+      <p class="my-1">
+        {{post.body}}
+      </p>
+      <span>{{post.create_at|timesince}}</span>
+    </div>
+  </div>
+
+
+
+
+  <div class="post-form">
+    <div class="post-form-header bg-primary">
+      <h3>Leave A Comment</h3>
+    </div>
+    <form class="form my-1" action="{{post.get_absolute_url}}" method="post">
+      {% csrf_token %}
+      <textarea
+        cols="30"
+        rows="5"
+        placeholder="Comment on this post"
+        name="new_comment_body"
+       ></textarea>
+      <input type="submit" class="btn btn-dark my-1" value="Submit" />
+    </form>
+  </div>
+
+
+  <div class="posts">
+    
+    {% for comment in post.comment_set.all %}
+    <div class="post bg-white p-1 my-1">
+      <div>
+        <a href="{{comment.author.get_absolute_url}}">
+          <img
+            class="round-img"
+            src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+            alt=""
+          />
+          <h4>{{comment.author.get_full_name}}</h4>
+        </a>
+      </div>
+      <div>
+        <p class="my-1">
+          {{comment.body}}
+        </p>
+        <span>{{comment.create_at|timesince}}</span>
+      </div>
+    </div>
+
+    {% endfor %}
+    
+  </div>
+</section>
+{% endblock content %}
