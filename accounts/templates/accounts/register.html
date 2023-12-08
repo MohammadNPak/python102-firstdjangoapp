@@ -17,7 +17,7 @@
         Sign Up
       </h1>
       <p class="lead"><i class="fas fa-user"></i> Create Your Account</p>
-      <form action="dashboard.html" class="form">
+      {% comment %} <form action="dashboard.html" class="form">
         <div class="form-group">
           <input type="text" placeholder="Name" required />
         </div>
@@ -36,8 +36,38 @@
         </div>
         <input type="submit" value="Register" class="btn btn-primary" />
       </form>
+ {% endcomment %}
+
+      {% for error in form.non_field_errors %}
+      <p class="bg-danger">
+        {{ error }}
+      </p>
+      {% endfor %}
+      <form action="/accounts/register" class="form" method="post">
+        {% csrf_token %}
+        {% for field in form  %}
+        
+        <div class="form-group">
+          {{field.label_tag}}
+          {{field}}
+          {% if field.help_text %}
+          <small class="form-text">
+            {{field.help_text}}
+          </small>
+          {% endif %}
+
+          {% if field.errors %}
+          <small class="form-text bg-danger">
+            {{field.errors}}
+          </small>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <input type="submit" value="Register" class="btn btn-primary" />
+      </form>
       <p class="my-1">
         Already have an account? <a href="login.html">Sign In</a>
       </p>
+
     </section>
     {% endblock content %}

@@ -14,21 +14,30 @@
     </nav>
     <section class="container">
       <!-- Alert -->
+
+      {% if messages %}
+      {% for message in messages %}
       <div class="alert alert-danger">
-        Invalid Credentials
+        {{message}}
       </div>
+      {% endfor %}
+      {% endif %}
 
       <h1 class="large text-primary">
         Sign In
       </h1>
       <p class="lead"><i class="fas fa-user"></i> Sign into your account</p>
-      <form action="dashboard.html" class="form">
+      <form action="{% url 'login' %}" class="form" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        
         <div class="form-group">
-          <input type="email" placeholder="Email Address" />
+          {{field.label_tag}}
+          {{field}}
+          {{field.help_text}}
+          {{field.errors}}
         </div>
-        <div class="form-group">
-          <input type="password" placeholder="Password" minlength="6" />
-        </div>
+        {% endfor %}
         <input type="submit" value="Login" class="btn btn-primary" />
       </form>
       <p class="my-1">

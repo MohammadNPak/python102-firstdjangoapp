@@ -3,6 +3,7 @@ from .models import Post,Comment
 from accounts.models import UserProfile
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from .forms import LoginForm
 # Create your views here.
 
 def posts(request):
@@ -30,4 +31,22 @@ def post_detail(request,slug):
             post=post,
             author=UserProfile.objects.first())
         return render(request,"blog/post_detail.html",context={"post":post})
-        
+
+def test(request):
+    if request.method == "GET":
+        form = LoginForm()
+        # print(request.GET)
+        # print(request.POST)
+        return render(request,"blog/test.html",{"form":form})
+    elif request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            email = form.cleaned_data["email"]
+            print(username)
+            print(password)
+            print(email)
+        # print(form)
+    return render(request,"blog/test.html",{"form":form})
+    
