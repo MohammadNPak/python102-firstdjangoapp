@@ -42,3 +42,8 @@ class Comment(models.Model):
         return f"Comment('{self.body[:20]}...')"
     
 
+
+class Test(models.Model):
+    description = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='testimage')
+

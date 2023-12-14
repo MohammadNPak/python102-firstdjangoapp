@@ -1,13 +1,13 @@
 
 <div class="post bg-white my-1 p-1">
     <div>
-      <a href="profile.html">
+      <a href="{% url 'profile_detail' post.author.slug %}">
         <img
           class="round-img"
           src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
           alt=""
         />
-        <h4>John Doe</h4>
+        <h4>{{post.author.user.username}}</h4>
       </a>
     </div>
 

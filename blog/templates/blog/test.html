@@ -6,31 +6,16 @@
     <title>Document</title>
 </head>
 <body>
-    
-    {% comment %} <form  method="post" action="/blog/test">
-        {% csrf_token %}
-        <label for="text-id">text</label>
-        <input type="text" name="text" id="text-id">
-        <input type="submit" value="submit">
-    </form> {% endcomment %}
-    
-    {% comment %} <form action="/blog/test" method="post">
-        {% csrf_token %}
-        {{form}}
-        <input type="submit" value="submit">
-    </form> {% endcomment %}
+<h2>
 
-    <form action="/blog/test" method="post">
-        {% csrf_token %}
-        {% for field in form  %}
-        {{field.label}}
-        {{field.label_tag}}
-        {{field}}
-        {{field.errors}}
-        {% endfor %}
-        <input type="submit" value="submit">
-    </form>
+    sending simple image to server
+</h2>
 
+<form action="/blog/test/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="submit">
+</form>
 
 </body>
 </html>

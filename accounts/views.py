@@ -4,12 +4,19 @@ from .models import UserProfile
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
+from django.views import View
+from .forms import UserProfileCreationForm
 
 from django.contrib.auth.models import User
 # from .forms import UserCreationForm
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from django.contrib.auth import authenticate,login as django_login
+from django.contrib.auth import (
+    authenticate,
+    login as django_login,
+    logout as django_logout)
+
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 
@@ -42,13 +49,43 @@ def login(request):
             messages.add_message(request,messages.ERROR,f"user {username} was not found!")
     return render(request,'accounts/login.html',context={"form":form})
     
-
+def logout(request):
+    django_logout(request)
+    return redirect(reverse("index"))
 
 def profile(request,slug):
     user_profile = get_object_or_404(UserProfile,slug=slug)
     # user_profile = UserProfile.objects.get(id=id)
+    
     return render(request,'accounts/profile.html',
                   context={"user_profile":user_profile})
+
+
+class UserProfileUpdateView(View,LoginRequiredMixin):
+
+    def get(self,request,slug):
+        user_profile = get_object_or_404(UserProfile,slug=slug)
+        form = UserProfileCreationForm(instance=user_profile)
+        return render(request,"accounts/create-profile.html",{"form":form})
+
+    def post(self,request,slug):
+        form = UserProfileCreationForm(data=request.POST,files=request.FILES)
+
+        if form.is_valid():
+            # user_profile = form.save(commit=False)
+            # user_profile.user=request.user
+            # user_profile.slug=request.user.userprofile.slug
+            # user_profile.save()
+
+            user_profile = request.user.userprofile
+            user_profile.bio = form.cleaned_data["bio"]
+            user_profile.picture = request.FILES["picture"]
+            user_profile.save()
+
+
+            return redirect(reverse("dashboard"))
+        return render(request,"accounts/create-profile.html",{"form":form})
+
 
 def profiles(request):
     user_profiles = UserProfile.objects.all()
