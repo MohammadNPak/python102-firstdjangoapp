@@ -64,23 +64,27 @@ def profile(request,slug):
 class UserProfileUpdateView(View,LoginRequiredMixin):
 
     def get(self,request,slug):
-        user_profile = get_object_or_404(UserProfile,slug=slug)
+        user_profile = request.user.userprofile
         form = UserProfileCreationForm(instance=user_profile)
         return render(request,"accounts/create-profile.html",{"form":form})
 
     def post(self,request,slug):
-        form = UserProfileCreationForm(data=request.POST,files=request.FILES)
+        form = UserProfileCreationForm(
+            data=request.POST,
+            files=request.FILES,
+            instance=request.user.userprofile
+            )
 
         if form.is_valid():
             # user_profile = form.save(commit=False)
             # user_profile.user=request.user
             # user_profile.slug=request.user.userprofile.slug
-            # user_profile.save()
+            form.save()
 
-            user_profile = request.user.userprofile
-            user_profile.bio = form.cleaned_data["bio"]
-            user_profile.picture = request.FILES["picture"]
-            user_profile.save()
+            # user_profile = request.user.userprofile
+            # user_profile.bio = form.cleaned_data["bio"]
+            # user_profile.picture = request.FILES["picture"]
+            # user_profile.save()
 
 
             return redirect(reverse("dashboard"))
