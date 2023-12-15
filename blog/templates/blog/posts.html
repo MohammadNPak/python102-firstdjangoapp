@@ -16,8 +16,9 @@
         </div>
         <form action="/blog/posts" method="post" class="form my-1">
           {% csrf_token %}
+          <input type="text" name="title" id="" placeholder="Title" required>
           <textarea cols="30" rows="5" placeholder="Create a post" name="post_body"></textarea>
-          
+
           <input type="submit" value="Submit" class="btn btn-dark my-1" />
         </form>
         <div class="posts">
@@ -29,6 +30,52 @@
           {% endfor %}
 
         </div>
+
+
+        {% comment %} paginator {% endcomment %}
+
+        <nav aria-label="..." >
+          <ul class="pagination">
+            
+            {% if all_posts.has_previous %}
+            <li class="page-item ">
+              <span class="page-link"><a href="{% url 'posts' %}?page={{all_posts.previous_page_number}}">Previous</a></span>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">Previous</span>
+            </li>
+            {% endif %}
+
+            {% for i in all_posts.paginator.page_range %}
+
+            {% if all_posts.number == i %}
+            
+            <li class="page-item active">
+              <span class="page-link">
+                {{i}}
+                <span class="sr-only">(current)</span>
+              </span>
+            </li>
+
+            {% else %}
+            <li class="page-item">
+              <a class="page-link" href="{% url 'posts' %}?page={{i}}">
+                {{i}}
+              </a>
+            </li>
+
+            {% endif %}
+            {% endfor %}
+   
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav>
+
+        {% comment %} end paginator {% endcomment %}
+
       </div>
     </section>
 

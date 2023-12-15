@@ -16,6 +16,9 @@ class Post(models.Model):
         on_delete=models.CASCADE,
         related_name="posts")
 
+    like = models.ManyToManyField(UserProfile,related_name="like")
+    dislike = models.ManyToManyField(UserProfile,"dislike")
+
 
     def __str__(self) -> str:
         return f"Post({self.body[:30]}...)"

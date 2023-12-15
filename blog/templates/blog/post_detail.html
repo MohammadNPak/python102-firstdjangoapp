@@ -9,10 +9,10 @@
       <a href="{{post.author.get_absolute_url}}">
         <img
           class="round-img"
-          src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+          src="{{post.author.picture.url}}"
           alt=""
         />
-        <h4>{{post.author.get_full_name}}</h4>
+        <h4>{{post.author.user.get_full_name}}</h4>
       </a>
     </div>
     <div>
@@ -52,10 +52,10 @@
         <a href="{{comment.author.get_absolute_url}}">
           <img
             class="round-img"
-            src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+            src="{{comment.author.picture.url}}"
             alt=""
           />
-          <h4>{{comment.author.get_full_name}}</h4>
+          <h4>{{comment.author.user.username}}</h4>
         </a>
       </div>
       <div>

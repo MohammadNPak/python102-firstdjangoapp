@@ -4,7 +4,7 @@
       <a href="{% url 'profile_detail' post.author.slug %}">
         <img
           class="round-img"
-          src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+          src="{{post.author.picture.url}}"
           alt=""
         />
         <h4>{{post.author.user.username}}</h4>
@@ -16,14 +16,20 @@
         {{ post.body }}
       </p>
       <button class="btn">
-        <i class="fas fa-thumbs-up"></i> <span>4</span>
+        <i class="fas fa-thumbs-up"></i> <span>{{post.likes_count}}</span>
       </button>
       <button class="btn">
-        <i class="fas fa-thumbs-down"></i>
+        <i class="fas fa-thumbs-down">{{post.dislikes_count}}</i>
       </button>
-      <a href="post.html" class="btn btn-primary">
+
+      <button class="btn">
+        <a href="{% url 'add_favorite' post.slug %}"><i class="fas fa-star"> {{post.is_fav}}</i></a>
+      </button>
+
+      <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary">
         Discussion
       </a>
+      
     </div>
   </div>
 
