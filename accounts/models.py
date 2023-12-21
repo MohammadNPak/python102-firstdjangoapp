@@ -19,4 +19,16 @@ class UserProfile(models.Model):
     
     def get_absolute_url(self):
         return reverse("profile_detail", kwargs={"slug": self.slug})
-    
+
+
+class Experience(models.Model):
+    userprofile = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
+    company = models.CharField(max_length=200)
+    start_date = models.DateField()
+    end_date=models.DateField(null=True)
+    position = models.CharField(max_length=200)
+    description=models.TextField()
+
+    def __str__(self) -> str:
+        return f"Experience(user={self.userprofile.user.username})"
+

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import UserProfile
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -21,7 +22,7 @@ def index(request):
 
 # @login_required
 def posts(request):
-    print(request.session["favorite"])
+    # print(request.session["favorite"])
     if request.method == "GET":
         # fav_posts = Post.objects.filter(id__in=request.session["favorite"])
         # not_fav_posts = Post.objects.filter(
@@ -29,15 +30,25 @@ def posts(request):
 
         # all_posts = fav_posts.union(not_fav_posts)
         
-        all_posts = (Post.objects.all()
-                     .annotate(likes_count=Count("like"))
-                     .annotate(dislikes_count=Count("dislike"))
-                     .annotate(is_fav=
-            Case(
-                When(id__in=[int(x) for x in request.session["favorite"]], then=1),
-                default=0, output_field=IntegerField()
-            )).order_by("-is_fav","create_at"))
-
+        if request.session.get("favorite"):
+            all_posts = (Post.objects.all()
+                        .annotate(likes_count=Count("like"))
+                        .annotate(dislikes_count=Count("dislike"))
+                        .annotate(is_fav=
+                Case(
+                    When(id__in=[int(x) for x in request.session["favorite"]], then=1),
+                    default=0, output_field=IntegerField()
+                )).order_by("-is_fav","create_at"))
+        else:
+            all_posts = (Post.objects.all()
+                        .annotate(likes_count=Count("like"))
+                        .annotate(dislikes_count=Count("dislike"))
+                        .annotate(is_fav=
+                Case(
+                    When(id__in=[], then=1),
+                    default=0, output_field=IntegerField()
+                )).order_by("-is_fav","create_at"))
+    
 
         paginator = Paginator(all_posts,2)
         current_page = request.GET.get("page")
@@ -88,25 +99,6 @@ def add_favorite(request,slug):
     
     return redirect(reverse("posts"))
 
-
-# def test(request):
-#     if request.method == "GET":
-#         form = LoginForm()
-#         # print(request.GET)
-#         # print(request.POST)
-#         return render(request,"blog/test.html",{"form":form})
-#     elif request.method == "POST":
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data["username"]
-#             password = form.cleaned_data["password"]
-#             email = form.cleaned_data["email"]
-#             print(username)
-#             print(password)
-#             print(email)
-#         # print(form)
-#     return render(request,"blog/test.html",{"form":form})
-
 from .forms import TestForm
 
 class TestView(View):
@@ -119,9 +111,25 @@ class TestView(View):
         image = request.FILES.get("user_profile_picture")
         form = TestForm(data=request.POST,files=request.FILES)
         if form.is_valid():
-            # with open("D:\code\maktabsharif\s22\image.png","wb+") as fp:
-            #     for chunk in image.chunks():
-            #         fp.write(chunk)
             form.save()
             
         return render(request,"blog/test.html",{"form":form})
+    
+
+
+class Like(View,LoginRequiredMixin):
+    def post(self,request,slug):
+        post = get_object_or_404(Post,slug=slug)
+        is_liked = post.like.filter(id=request.user.userprofile.id)
+        if is_liked:
+            post.like.remove(request.user.userprofile)
+        else:
+            post.like.add(request.user.userprofile)
+        return redirect(reverse("posts"))
+
+
+
+    
+
+
+

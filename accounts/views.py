@@ -1,14 +1,11 @@
 from django.shortcuts import render,redirect
-from django.urls import reverse
-from .models import UserProfile
+from django.urls import reverse,reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
 from django.views import View
-from .forms import UserProfileCreationForm
-
+from django.views.generic import ListView,DetailView,CreateView
 from django.contrib.auth.models import User
-# from .forms import UserCreationForm
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import (
     authenticate,
@@ -17,6 +14,8 @@ from django.contrib.auth import (
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import UserProfile,Experience
+from .forms import UserProfileCreationForm
 
 # Create your views here.
 
@@ -53,13 +52,6 @@ def logout(request):
     django_logout(request)
     return redirect(reverse("index"))
 
-def profile(request,slug):
-    user_profile = get_object_or_404(UserProfile,slug=slug)
-    # user_profile = UserProfile.objects.get(id=id)
-    
-    return render(request,'accounts/profile.html',
-                  context={"user_profile":user_profile})
-
 
 class UserProfileUpdateView(View,LoginRequiredMixin):
 
@@ -76,25 +68,62 @@ class UserProfileUpdateView(View,LoginRequiredMixin):
             )
 
         if form.is_valid():
-            # user_profile = form.save(commit=False)
-            # user_profile.user=request.user
-            # user_profile.slug=request.user.userprofile.slug
             form.save()
-
-            # user_profile = request.user.userprofile
-            # user_profile.bio = form.cleaned_data["bio"]
-            # user_profile.picture = request.FILES["picture"]
-            # user_profile.save()
-
-
             return redirect(reverse("dashboard"))
         return render(request,"accounts/create-profile.html",{"form":form})
 
 
-def profiles(request):
-    user_profiles = UserProfile.objects.all()
-    return render(request,'accounts/profiles.html',
-                  context={"user_profiles":user_profiles})
+# def profiles(request):
+#     user_profiles = UserProfile.objects.all()
+#     return render(request,'accounts/profiles.html',
+#                   context={"user_profiles":user_profiles})
+
+
+# def profile(request,slug):
+#     user_profile = get_object_or_404(UserProfile,slug=slug)
+#     # user_profile = UserProfile.objects.get(id=id)
+    
+#     return render(request,'accounts/profile.html',
+#                   context={"user_profile":user_profile})
+
+class ProfileDetailView(DetailView):
+    model=UserProfile
+    slug_url_kwarg="slug"
+    # template_name="accounts/userprofile.html"
+
+
+class ProfileListView(ListView):
+    model = UserProfile
+
+    # template_name = "accounts/profiles.html"
+    # queryset = UserProfile.objects.all()
+    # context_object_name = "profiles"
+
+
+class ExperienceCreateView(CreateView,LoginRequiredMixin):
+    model=Experience
+    success_url=reverse_lazy("index")
+    fields = ["company","start_date",
+              "end_date","position",
+              "description",]
+    
+    def form_valid(self, form):
+        form.instance.userprofile = self.request.user.userprofile
+        form.save()
+        return super().form_valid(form)
+    
+    
+
+
+
+
+
+
+
+    
+
+
+
 
 def register(request):
     if request.method=="GET":
@@ -122,3 +151,4 @@ def register(request):
             return render(request,
                       'accounts/register.html',
                       context={"form":form})
+        

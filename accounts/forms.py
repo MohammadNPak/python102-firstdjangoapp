@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import UserProfile
+from .models import UserProfile,Experience
 
 
 def password_len_validator(text):
@@ -42,3 +42,10 @@ class UserProfileCreationForm(forms.ModelForm):
         model = UserProfile
         # fields =["job_title","bio","picture"] # "__all__"
         exclude = ["user","slug"] 
+
+
+class ExperienceCreationForm(forms.ModelForm):
+    class Meta:
+        model = Experience
+        exclude = ["userprofile"]
+
