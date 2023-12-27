@@ -14,9 +14,6 @@ class UserProfile(models.Model):
     def __str__(self) -> str:
         return f"UserProfile({self.user.first_name} {self.user.last_name})"
     
-    def get_full_name(self):
-        return self.first_name+" "+ self.last_name
-    
     def get_absolute_url(self):
         return reverse("profile_detail", kwargs={"slug": self.slug})
 
@@ -31,4 +28,14 @@ class Experience(models.Model):
 
     def __str__(self) -> str:
         return f"Experience(user={self.userprofile.user.username})"
+
+
+class Education(models.Model):
+    user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
+    university = models.CharField(max_length=200)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True)
+    degree = models.CharField(max_length=200)
+    field_of_study=models.CharField(max_length =200)
+    description = models.TextField()
 

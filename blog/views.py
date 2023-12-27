@@ -128,7 +128,10 @@ class Like(View,LoginRequiredMixin):
         return redirect(reverse("posts"))
 
 
-
+def set_dark(request):
+    res = redirect(reverse("index"))
+    res.set_cookie("dark","True")
+    return res
     
 
 
